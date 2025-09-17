@@ -20,6 +20,6 @@ class Index extends Component
                 ->orWhere('content','like',"%{$this->search}%"))
             ->latest()->paginate(9);
 
-        return view('livewire.blog.index', ['posts' => $posts])->layout('layouts.app');
+        return view('livewire.blog.index', ['posts' => $posts])->layout('components.layouts.app');
     }
 }
