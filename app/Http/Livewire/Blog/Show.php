@@ -11,11 +11,11 @@ class Show extends Component
 
     public function mount(string $slug)
     {
-        $this->post = Post::where('slug',$slug)->firstOrFail();
+        $this->post = Post::where('slug', $slug)->firstOrFail();
     }
 
     public function render()
     {
-        return view('livewire.blog.show')->layout('components.layouts.app');
+        return view('livewire.blog.show');
     }
 }

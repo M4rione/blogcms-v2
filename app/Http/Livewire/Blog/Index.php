@@ -16,10 +16,13 @@ class Index extends Component
     {
         $posts = Post::query()
             ->when($this->search, fn($q) =>
-                $q->where('title','like',"%{$this->search}%")
-                ->orWhere('content','like',"%{$this->search}%"))
-            ->latest()->paginate(9);
+            $q->where(function ($query) {
+                $query->where('title', 'like', "%{$this->search}%")
+                    ->orWhere('content', 'like', "%{$this->search}%");
+            }))
+            ->latest()
+            ->paginate(9);
 
-        return view('livewire.blog.index', ['posts' => $posts])->layout('components.layouts.app');
+        return view('livewire.blog.index', ['posts' => $posts]);
     }
 }
