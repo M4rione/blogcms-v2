@@ -7,6 +7,8 @@ use Livewire\WithFileUploads;
 use App\Models\Post;
 use App\Models\Category;
 use App\Models\Tag;
+use Illuminate\Support\Facades\Auth;
+
 
 class Create extends Component
 {
@@ -30,6 +32,15 @@ class Create extends Component
         ];
     }
 
+    protected $messages = [
+        'title.required' => 'The title is required.',
+        'content.required' => 'Content cannot be empty.',
+        'category_id.required' => 'Please select a category.',
+        'tag_ids.*.exists' => 'Invalid tag selected.',
+        'image.image' => 'The file must be an image.',
+    ];
+
+
     public function save()
     {
         $this->validate();
@@ -38,26 +49,26 @@ class Create extends Component
         $post->title = $this->title;
         $post->content = $this->content;
         $post->category_id = $this->category_id;
-        $post->user_id = auth()->id();
+        $post->user_id = Auth::check() ? Auth::id() : null;
+
 
         if ($this->image) {
-            $path = $this->image->store('thumbnails','public');
+            $path = $this->image->store('thumbnails', 'public');
             $post->image = $path;
         }
 
         $post->save();
         $post->tags()->sync($this->tag_ids);
 
-        session()->flash('success','Post created.');
+        session()->flash('success', 'Post created.');
         return redirect()->route('posts.index');
     }
 
     public function render()
-{
-    return view('livewire.posts.create', [
-        'categories' => Category::orderBy('name')->get(),
-        'tags' => Tag::orderBy('name')->get(),
-    ]);
-}
-
+    {
+        return view('livewire.posts.create', [
+            'categories' => Category::orderBy('name')->get(),
+            'tags' => Tag::orderBy('name')->get(),
+        ]);
+    }
 }
